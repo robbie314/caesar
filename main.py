@@ -15,11 +15,50 @@
 # limitations under the License.
 #
 import webapp2
+from caesar import encrypt
+page_header = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caesar</title>
+</head>
+<body>
+    <h1>Caesar</h1>
+"""
+
+page_footer = """
+</body>
+</html>
+"""
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+
+
+        encrypt_form ='''
+        <form action="/encrypt" method="post">
+            <label>Rotation Amount</label>
+                <input type="text" name="rot"/><br>
+            <label>Plain Text</label>
+                <input type="text" name="plaintext"</input><br>
+                <input type="submit" value="Encrypt"/>
+        </form>
+        '''
+        response = page_header + encrypt_form + page_footer
+        self.response.write(response)
+    #    self.response.write(encrypt("aaa", 2))
+
+class Encrypt(webapp2.RequestHandler):
+    def post(self):
+        rot=self.request.get("rot")
+        plaintext=self.request.get("plaintext")
+        encrypt_text=encrypt(plaintext, int(rot))
+        response=page_header + encrypt_text + page_footer
+        self.response.write(response)
+
+
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/encrypt', Encrypt)
 ], debug=True)
